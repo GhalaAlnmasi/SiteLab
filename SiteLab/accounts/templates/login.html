@@ -1,13 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Hello World :)</h1>
-     <h1>test pull requst extention</h1>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}login{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Login</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="mb-3">
+        <label>{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+
+    <button class="btn btn-dark w-100">Login</button>
+  </form>
+</div>
+{% endblock %}
