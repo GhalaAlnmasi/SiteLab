@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}main{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Dashboard</h2>
+
+  <p class="lead">Welcome back, {{ request.user.username }}!</p>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm">
+        <h5>Your Portfolios</h5>
+        <a href="#" class="btn btn-primary mt-2">Create New Portfolio</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm">
+        <h5>Messages</h5>
+        <p>No new messages.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
