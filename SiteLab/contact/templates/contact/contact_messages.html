@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-12">
+
+    <h2 class="text-2xl font-bold mb-6">Contact Messages</h2>
+
+    <div class="bg-white shadow rounded-lg p-6">
+
+        {% if messages_list %}
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-100 border-b">
+                    <th class="p-3 text-left">Name</th>
+                    <th class="p-3 text-left">Email</th>
+                    <th class="p-3 text-left">Message</th>
+                    <th class="p-3 text-left">Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for msg in messages_list %}
+                <tr class="border-b">
+                    <td class="p-3">{{ msg.name }}</td>
+                    <td class="p-3">{{ msg.email }}</td>
+                    <td class="p-3">{{ msg.message|truncatechars:80 }}</td>
+                    <td class="p-3 text-gray-500 text-sm">{{ msg.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <p class="text-gray-500">No messages yet.</p>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
