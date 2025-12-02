@@ -1,23 +1,31 @@
-{% extends "base.html" %}
+{% extends 'main/base.html' %}
 
-{% block title %}login{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Login</h2>
+<div class="full-card" data-aos="zoom-in">
+    <div class="registertion-card">
+        <h2 class="text-center fw-bold mb-4">Login</h2>
 
-  <form method="POST">
-    {% csrf_token %}
+        <form method="POST">
+            {% csrf_token %}
 
-    {% for field in form %}
-      <div class="mb-3">
-        <label>{{ field.label }}</label>
-        {{ field }}
-      </div>
-    {% endfor %}
+            {% if form.errors %}
+            <div class="alert alert-danger py-2">
+                Incorrect username or password.
+            </div>
+            {% endif %}
 
-    <button class="btn btn-dark w-100">Login</button>
-  </form>
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+            </div>
+            {% endfor %}
+
+            <button class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
 </div>
-{% endblock %}
 
+{% endblock %}
