@@ -16,6 +16,9 @@
     <!-- AOS Animation Library CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.svg' %}"/>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
@@ -23,7 +26,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}">
+            <a class="navbar-brand fw-bold fs-3" href="{% url 'main:home' %}">
                 <i class="fa-solid fa-cube text-primary me-2"></i>SiteLab
             </a>
 
@@ -34,11 +37,11 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/portfolios/our-services/">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/accounts/login/">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'main:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'portfolios:our_services' %}">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Let's Talk</a></li>
                     <li class="nav-item ms-lg-2">
-                        <a class="btn btn-custom-primary btn-sm" href="/contacts/contact-us/">Let's Talk</a>
+                        <a class="btn btn-custom-primary btn-sm" href="#">Login</a>
                     </li>
                 </ul>
             </div>
@@ -46,6 +49,8 @@
     </nav>
 
     <main> 
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
         {% block content %}{% endblock %}
     </main>
 

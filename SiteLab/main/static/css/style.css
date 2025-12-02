@@ -15,7 +15,9 @@ body {
     color: var(--dark-text);
     overflow-x: hidden;
     background-color: #f3f4f6;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
+    /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
+    background: linear-gradient(-45deg,  #ffe65e, #ff80a6,#a77dff, #8cffdd);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
 }
@@ -182,4 +184,19 @@ body {
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.35);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.glass-title {
+    /* The Glass Effect (Same as your card) */
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+
+    /* The Sizing (Specific for Text) */
+    display: inline-block; /* Makes box fit the text width */
+    width: auto;           /* Overrides fixed width */
+    padding: 5px 15px;    
 }
