@@ -3,31 +3,85 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2>Your Profile</h2>
+<div class="full-card" data-aos="fade-up">
+    <div class="registertion-card">
+        <h2 class="text-center mb-5">Your Profile</h2>
 
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-    <div class="mb-3">
-      <label>Avatar</label><br>
-      {% if request.user.profile.avatar %}
-        <img src="{{ request.user.profile.avatar.url }}" class="img-thumbnail mb-2" width="120">
-      {% endif %}
-      {{ form.avatar }}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Avatar -->
+            <div class="mb-4 text-center">
+                <div class="avatar-container mb-3">
+                    {% if request.user.profile.avatar %}
+                    <img src="{{ request.user.profile.avatar.url }}" class="profile-avatar">
+                    {% else %}
+                    {% with username=request.user.username %}
+                    <div class="avatar-placeholder" style="background-color: {{ random_color }};">
+                        {{ username|slice:":2"|upper }}
+                    </div>
+                    {% endwith %}
+                    {% endif %}
+                </div>
+
+                <div class="file-input-group">
+
+                    <label for="id_avatar" class="custom-file-upload-btn">
+                        Upload/Change Image
+                    </label>
+
+                    {{ form.avatar }}
+
+                    {% if request.user.profile.avatar %}
+                    <div class="current-avatar-details mt-2">
+
+                        <span class="current-file-name-text">
+                            Current Image:
+                            <a href="{{ request.user.profile.avatar.url }}" target="_blank"
+                                class="current-file-link-style">
+                                {{ request.user.profile.avatar.name|cut:"avatars/"|slice:":25" }}...
+                            </a>
+                        </span>
+
+                        <div class="clear-option">
+                            <input type="checkbox" name="avatar_clear" id="avatar_clear_id" class="clear-checkbox">
+                            <label for="avatar_clear_id" class="clear-label">Remove</label>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {% if form.avatar.errors %}
+                <div class="text-danger small mt-1">{{ form.avatar.errors }}</div>
+                {% endif %}
+
+                <p id="file-name-display" class="file-name-text mt-2"></p>
+            </div>
+
+            <!-- Other fields -->
+            {% for field in form %}
+            {% if field.name != 'avatar' and field.name != 'avatar_clear' %}
+            <div class="mb-4">
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <button class="register-btn">Save</button>
+        </form>
     </div>
-
-    <div class="mb-3">
-      <label>Job Title</label>
-      {{ form.job_title }}
-    </div>
-
-    <div class="mb-3">
-      <label>Bio</label>
-      {{ form.bio }}
-    </div>
-
-    <button class="btn btn-primary">Save</button>
-  </form>
 </div>
 {% endblock %}

@@ -1,27 +1,44 @@
 {% extends 'main/base.html' %}
 
-{% block title %}main{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2>Dashboard</h2>
+<div class="full-card" data-aos="fade-up">
+    <div class="registertion-card">
+        <h2 class="text-center mb-5">Dashboard</h2>
 
-  <p class="lead">Welcome back, {{ request.user.username }}!</p>
+        <!-- Notifications -->
+        {% if notifications %}
+        <div class="mb-3">
+            {% for note in notifications %}
+                <div class="alert alert-info">{{ note.message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card p-3 shadow-sm">
-        <h5>Your Portfolios</h5>
-        <a href="#" class="btn btn-primary mt-2">Create New Portfolio</a>
-      </div>
+        <div class="dashboard-grid">
+            <!-- Portfolio Cards -->
+            {% for p in portfolios %}
+            <div class="card">
+                <h3>{{ p.get_template_type_display }}</h3>
+                <p>Status: {{ p.get_status_display }}</p>
+                <a href="{% url 'accounts:edit_portfolio' p.pk %}" class="btn btn-primary w-100">Edit</a>
+            </div>
+            {% endfor %}
+
+            <!-- Custom Requests -->
+            {% for r in requests %}
+            <div class="card">
+                <h3>Request</h3>
+                <p>Status: {{ r.get_status_display }}</p>
+                <a href="{% url 'accounts:custom_request_view' r.pk %}" class="btn btn-primary w-100">View</a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-
-    <div class="col-md-4">
-      <div class="card p-3 shadow-sm">
-        <h5>Messages</h5>
-        <p>No new messages.</p>
-      </div>
-    </div>
-  </div>
 </div>
+
+<style>
+
+</style>
 {% endblock %}
