@@ -27,16 +27,18 @@ def register_view(request):
 
 
 def login_view(request):
+    next_url = request.GET.get('next') or request.POST.get('next') or '/'  # fallback to home
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("accounts:profile_view")
+            return redirect(next_url)  # <-- redirect to the next page
     else:
         form = LoginForm()
 
-    return render(request, "accounts/login.html", {"form": form})
+    return render(request, "accounts/login.html", {"form": form, "next": next_url})
+
 
 
 @login_required
