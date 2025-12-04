@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from .models import Portfolio, PortfolioTemplate
 from .forms import PortfolioForm
 
-MOCK_USER_PK = 1
+# MOCK_USER_PK = 1
 
 User = get_user_model()
 
@@ -18,28 +18,28 @@ def portfolio_add(request):
     return render(request, 'portfolios/portfolio-add.html', {'templates': templates})
 
 
-def _get_portfolio_instance(user_pk, selected_template_id=1):
-    """Fetch or create a Portfolio instance for a user PK (returns unsaved instance for create branch)."""
-    try:
-        portfolio = Portfolio.objects.get(user__pk=user_pk)
+# def _get_portfolio_instance(user_pk, selected_template_id=1):
+#     """Fetch or create a Portfolio instance for a user PK (returns unsaved instance for create branch)."""
+#     try:
+#         portfolio = Portfolio.objects.get(user__pk=user_pk)
 
-        if portfolio.template_id != int(selected_template_id):
-            portfolio.template_id = int(selected_template_id)
-            portfolio.save()
+#         if portfolio.template_id != int(selected_template_id):
+#             portfolio.template_id = int(selected_template_id)
+#             portfolio.save()
 
-    except Portfolio.DoesNotExist:
-        try:
-            mock_user = User.objects.get(pk=user_pk)
-            portfolio = Portfolio(user=mock_user, template_id=selected_template_id)
-        except User.DoesNotExist:
-            print(f"CRITICAL ERROR: Mock User with PK={user_pk} does not exist. Returning unsaved Portfolio.")
-            portfolio = Portfolio(template_id=selected_template_id)
+#     except Portfolio.DoesNotExist:
+#         try:
+#             mock_user = User.objects.get(pk=user_pk)
+#             portfolio = Portfolio(user=mock_user, template_id=selected_template_id)
+#         except User.DoesNotExist:
+#             print(f"CRITICAL ERROR: Mock User with PK={user_pk} does not exist. Returning unsaved Portfolio.")
+#             portfolio = Portfolio(template_id=selected_template_id)
 
-    except Exception as e:
-        print(f"An unexpected error occurred during portfolio retrieval/creation: {e}")
-        portfolio = Portfolio(template_id=selected_template_id)
+#     except Exception as e:
+#         print(f"An unexpected error occurred during portfolio retrieval/creation: {e}")
+#         portfolio = Portfolio(template_id=selected_template_id)
 
-    return portfolio
+#     return portfolio
 
 @login_required
 def portfolio_edit(request):
@@ -48,6 +48,7 @@ def portfolio_edit(request):
     selected_template_id = request.GET.get('template_id') or request.GET.get('template')
     if selected_template_id:
         try:
+            selected_template_id = int(selected_template_id)
             portfolio.template = PortfolioTemplate.objects.get(pk=selected_template_id)
             portfolio.save()
         except PortfolioTemplate.DoesNotExist:
