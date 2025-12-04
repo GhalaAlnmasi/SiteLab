@@ -7,6 +7,7 @@ from .forms import PortfolioForm
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError 
 
+
 MOCK_REVIEWS = [
     {'username': 'Sarah Jenkins', 'text': 'SiteLab completely transformed my portfolio. I got three job offers within a week of launching!', 'rating': 5, 'initial': 'S'},
     {'username': 'Mark D.', 'text': 'The custom website team is top-tier. They handled our complex requirements with ease.', 'rating': 5, 'initial': 'M'},
@@ -15,11 +16,6 @@ MOCK_REVIEWS = [
     {'username': 'Lena R.', 'text': 'Excellent value for money. The templates are high quality and easy to customize.', 'rating': 4, 'initial': 'L'},
     {'username': 'Chris B.', 'text': 'Needed a professional site fast, and SiteLab delivered. Fantastic support staff!', 'rating': 5, 'initial': 'C'},
 ]
-
-
-
-def our_services(request):
-    return render(request, 'portfolios/our-services.html', {'reviews': MOCK_REVIEWS})
 
 def portfolio_add(request):
     templates = PortfolioTemplate.objects.all()
@@ -56,51 +52,38 @@ def _get_portfolio_instance(user_pk, selected_template_id=1):
     return portfolio
 
 
+@login_required
 def portfolio_edit(request):
-    selected_template_id = int(request.POST.get('template_id', request.GET.get('template_id', 1)))
-    
-    portfolio = _get_portfolio_instance(MOCK_USER_PK, selected_template_id)
-    
-    
-    if request.method == 'POST':
-        form = PortfolioForm(request.POST, instance=portfolio)
-        
-        if form.is_valid():
-            
-            portfolio_instance = form.save(commit=False)
-            
-            if not portfolio_instance.pk:
-                try:
-                    User = get_user_model()
-                    portfolio_instance.user = User.objects.get(pk=MOCK_USER_PK)
-                except User.DoesNotExist:
-                    print(f"CRITICAL ERROR: Mock User with PK={MOCK_USER_PK} does not exist.")
-                    return render(request, 'portfolios/error_page.html', {'message': 'User authentication failed.'})
+    portfolio, created = Portfolio.objects.get_or_create(user=request.user)
+    selected_template_id = request.GET.get('template')
+    if selected_template_id:
+        try:
+            portfolio.template = PortfolioTemplate.objects.get(pk=selected_template_id)
+            portfolio.save()
+        except PortfolioTemplate.DoesNotExist:
+            pass
 
+    if request.method == "POST":
+        form = PortfolioForm(request.POST, instance=portfolio)
+
+        if form.is_valid():
+            portfolio = form.save(commit=False)
 
             if 'publish' in request.POST:
-                portfolio_instance.is_published = True
-                portfolio_instance.save()
-                return redirect('portfolios:portfolio_published')
+                portfolio.is_published = True
 
-            portfolio_instance.save()
-            
-            return redirect(f"{redirect('portfolios:portfolio_edit').url}?template_id={portfolio_instance.template_id}")
+            portfolio.save()
+
+            return redirect("portfolios:portfolio_edit")
 
     else:
         form = PortfolioForm(instance=portfolio)
-        
-    template_data = TEMPLATE_ID_MAP.get(portfolio.template_id, TEMPLATE_ID_MAP[1])
-    
-    context = {
-        'form': form,
-        'template_id': portfolio.template_id,
-        'template_name': template_data['name'],
-        'preview_data': model_to_dict(portfolio), 
-    }
-    
-    return render(request, 'portfolios/portfolio-edit.html', context)
 
+    return render(request, "portfolios/portfolio-edit.html", {
+        "form": form,
+        "current_template": portfolio.template,
+        "templates": PortfolioTemplate.objects.all(),
+    })
 
 def portfolio_published(request):
     portfolio_instance, portfolio_data = _get_portfolio_data()
@@ -123,45 +106,28 @@ def _get_portfolio_data(user_id=MOCK_USER_PK):
         portfolio.template_id = 1
         return portfolio, model_to_dict(portfolio)
 
-
+@login_required
 def preview_view(request):
-    """
-    Renders the live preview in the editor's iframe.
-    This view uses the user's SAVED data.
-    """
-    portfolio_instance, portfolio_data = _get_portfolio_data()
-    
-    template_path = portfolio_instance.get_template_path()
-    template_name = TEMPLATE_ID_MAP.get(portfolio_instance.template_id, TEMPLATE_ID_MAP[1])['name']
-    
-    context = {
-        'portfolio_data': portfolio_data, 
-        'template_path': template_path,  
-        'template_name': template_name,
-    }
-    return render(request, 'portfolios/preview.html', context)
+    portfolio = get_object_or_404(Portfolio, user=request.user)
 
+    return render(request, 'portfolios/preview.html', {
+        "portfolio": portfolio,
+        "template_path": portfolio.get_template_path(),
+        "template": portfolio.template
+    })
 
-def published_view(request):
-    """
-    Renders the final, live, published site at the user's unique URL.
-    This view uses the user's SAVED data.
-    """
-    portfolio_instance, portfolio_data = _get_portfolio_data()
-    
-    if not portfolio_instance.is_published:
-        return redirect(f"{redirect('portfolios:portfolio_edit').url}?template_id={portfolio_instance.template_id}")
-    
-    template_path = portfolio_instance.get_template_path()
-    template_name = TEMPLATE_ID_MAP.get(portfolio_instance.template_id, TEMPLATE_ID_MAP[1])['name']
-    
-    context = {
-        'portfolio_data': portfolio_data,
-        'template_path': template_path,
-        'template_name': template_name,
-    }
-    return render(request, 'portfolios/published.html', context)
+def published_view(request, username):
+    user = get_object_or_404(User, username=username)
+    portfolio = get_object_or_404(Portfolio, user=user)
 
+    if not portfolio.is_published:
+        return redirect("portfolios:portfolio_edit")
+
+    return render(request, 'portfolios/published.html', {
+        "portfolio": portfolio,
+        "template_path": portfolio.get_template_path(),
+        "template": portfolio.template
+    })
 
 def template1_view(request):
     return render(request, 'portfolios/portfolio_template1.html')

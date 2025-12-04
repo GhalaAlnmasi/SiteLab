@@ -8,3 +8,5 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'main/index.html')
 
+def our_services(request):
+    return render(request, 'portfolios/our-services.html')

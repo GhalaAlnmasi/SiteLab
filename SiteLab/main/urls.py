@@ -5,4 +5,5 @@ app_name = 'main'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('our-services/', views.our_services, name='our_services'),
 ]
