@@ -1,20 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ template_name }} - Published Site</title>
-</head>
-<body>
-    {% if template_path %}
-        {% include template_path %}
-    {% else %}
-    
-        <div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: sans-serif;">
-            <h1 style="color: #dc3545;">404 - Template Not Found</h1>
-            <p>The selected portfolio template could not be loaded.</p>
-            <p>Please return to the SiteLab dashboard to check your settings.</p>
-        </div>
-    {% endif %}
-</body>
-</html>
+{# templates/portfolios/published.html #}
+{% extends 'main/base.html' %}
+{% block title %}{{ portfolio.user.username }} — Published Portfolio{% endblock %}
+
+{% block content %}
+  <section class="py-5 text-center">
+    <div class="container">
+      <h1 class="mb-3">Your site is published 🎉</h1>
+      <p class="mb-4">Share your live site with this link:</p>
+      <a href="{{ live_url }}" class="btn btn-primary btn-lg">{{ live_url }}</a>
+      <hr class="my-4">
+      <p>You can view the live site below:</p>
+      <div class="mt-4">
+        {% if template_path %}
+          {# This includes the current published template #}
+          {% include template_path with data=portfolio %}
+        {% else %}
+          <div class="alert alert-danger">Template could not be loaded.</div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
