@@ -1,116 +1,105 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-# from django.db.models import JSONField
+from django.conf import settings
+from django.utils import timezone
+from django import template
 
-User = get_user_model()
+User = settings.AUTH_USER_MODEL
+
+
+register = template.Library()
+
+@register.filter
+def field_or_template(portfolio, field_name):
+    return portfolio.get_field_or_template(field_name)
 
 class PortfolioTemplate(models.Model):
     """
-    Template definitions (shared across users).
-    Only contains metadata and the template_path to include.
+    Template definitions (choose one).
+    Store some default values that a portfolio can fall back to.
     """
+    slug = models.SlugField(max_length=50, unique=True)
     name = models.CharField(max_length=100)
-    icon = models.CharField(max_length=100, help_text="FontAwesome class, e.g., 'fa-solid fa-camera'")
-    description = models.TextField(default="", blank=True)
+    icon_class = models.CharField(max_length=100, blank=True, help_text="FontAwesome / Bootstrap icon class")
+    description = models.TextField(blank=True)
+    # defaults used when a user leaves fields empty
+    default_tagline = models.CharField(max_length=150, blank=True)
+    default_about = models.TextField(blank=True)
+    default_email = models.EmailField(blank=True)
+    default_instagram = models.CharField(max_length=200, blank=True)
+    default_twitter = models.CharField(max_length=200, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+    template_path = models.CharField(max_length=200, default="portfolios/templates_pack/arch_minimal.html")
+    preview_partial = models.CharField(max_length=255, default="")
 
-    default_first_name = models.CharField(max_length=50, default="Samantha") 
-    default_last_name = models.CharField(max_length=50, default="Doe")  
-    default_tagline = models.CharField(max_length=255, default="Senior UX/UI Designer & Web Developer")
-    default_about_me = models.TextField(default="A seasoned professional dedicated to crafting visually stunning and highly functional digital experiences.")
-    default_contact_email = models.EmailField(default="contact@samanthajdoe.com")
 
-    template_path = models.CharField(
-        max_length=255,
-        default="portfolios/portfolio_template1.html",
-        help_text="Path to the HTML template (use Django include)"
-    )
+    class Meta:
+        ordering = ("order", "name")
 
     def __str__(self):
         return self.name
 
 
 class Portfolio(models.Model):
-    """
-    Per-user portfolio content. This stores the actual editable fields that will be
-    used by the preview and published pages. Each user has one Portfolio.
-    """
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="portfolio"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='portfolio')
+    template = models.ForeignKey(PortfolioTemplate, null=True, blank=True, on_delete=models.SET_NULL)
 
-    template = models.ForeignKey(
-        PortfolioTemplate,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="portfolios"
-    )
+    # basic profile fields
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    tagline = models.CharField(max_length=160, blank=True)
+    about = models.TextField(blank=True)
 
-    first_name = models.CharField(max_length=50, blank=True, null=True, verbose_name="First Name")
-    last_name = models.CharField(max_length=50, blank=True, null=True, verbose_name="Last Name")
-   
-    tagline = models.CharField(max_length=255, blank=True, null=True)
-    about_me = models.TextField(blank=True, null=True)
-    contact_email = models.EmailField(blank=True, null=True)
+    # contact/social fields
+    contact_email = models.EmailField(blank=True)
+    instagram = models.CharField(max_length=200, blank=True)
+    twitter = models.CharField(max_length=200, blank=True)
+    website = models.URLField(blank=True)
 
-    # Project 1
-    project1_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Project 1 Title")
-    project1_description = models.TextField(blank=True, null=True, verbose_name="Project 1 Description")
-    project1_url = models.URLField(max_length=255, blank=True, null=True, verbose_name="Project 1 URL")
+    # projects (simple fixed fields; can be refactored to a Project model)
+    project1_title = models.CharField(max_length=120, blank=True)
+    project1_description = models.TextField(blank=True)
+    project1_url = models.URLField(blank=True)
 
-    # Project 2
-    project2_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Project 2 Title")
-    project2_description = models.TextField(blank=True, null=True, verbose_name="Project 2 Description")
-    project2_url = models.URLField(max_length=255, blank=True, null=True, verbose_name="Project 2 URL")
+    project2_title = models.CharField(max_length=120, blank=True)
+    project2_description = models.TextField(blank=True)
+    project2_url = models.URLField(blank=True)
 
-    # Project 3
-    project3_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Project 3 Title")
-    project3_description = models.TextField(blank=True, null=True, verbose_name="Project 3 Description")
-    project3_url = models.URLField(max_length=255, blank=True, null=True, verbose_name="Project 3 URL")
- 
+    project3_title = models.CharField(max_length=120, blank=True)
+    project3_description = models.TextField(blank=True)
+    project3_url = models.URLField(blank=True)
 
-    is_published = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Portfolio of {self.user.username}"
+        return f"{self.user.username} portfolio"
 
-    def get_template_path(self):
-        """
-        Returns the template path based on the template object.
-        """
-        return self.template.template_path if self.template else "portfolios/default.html"
-    
-    def get_projects_list(self):
-        """
-        Reconstructs the list of projects from the individual fields for template context.
-        """
-        projects = []
-        for i in range(1, 4):
-            title = getattr(self, f'project{i}_title')
-            description = getattr(self, f'project{i}_description')
-            url = getattr(self, f'project{i}_url')
+    def display_name(self):
+        if self.first_name or self.last_name:
+            return f"{self.first_name} {self.last_name}".strip()
+        return getattr(self.user, 'get_full_name', lambda: self.user.username)()
 
-            if title:
-                projects.append({
-                    'title': title,
-                    'description': description or "",
-                    'url': url or "#",             
-                })
-        return projects
-
-    def get_field_or_default(self, field_name):
-        """
-        Helper to return the portfolio field if set, otherwise return the template default.
-        This can be used in views if you want to build a context object that always has values.
-        """
-        val = getattr(self, field_name, None)
+    # methods to get fallback from template
+    def get_field_or_template(self, field_name):
+        val = getattr(self, field_name, "")
         if val:
             return val
         if self.template:
-            template_default_name = f"default_{field_name}"
-            return getattr(self.template, template_default_name, "")
+            template_field = f"default_{field_name}" if field_name in ['about','tagline','contact_email','instagram','twitter'] else None
+            if template_field and hasattr(self.template, template_field):
+                return getattr(self.template, template_field)
         return ""
+
+class ContactMessage(models.Model):
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name='messages')
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    responded = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.name} to {self.portfolio.user.username}"

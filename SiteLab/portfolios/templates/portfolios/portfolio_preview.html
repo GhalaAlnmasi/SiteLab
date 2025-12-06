@@ -1,0 +1,156 @@
+{% extends "main/base.html" %}
+{% load portfolio_extras %}
+
+{% block title %}Portfolio Preview{% endblock %}
+
+{% block content %}
+
+<style>
+/* --------------------------
+   Preview Layout
+--------------------------- */
+.preview-section {
+    padding-top: 70px;
+}
+
+/* Wrapper for centering the preview */
+.preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0;
+}
+
+/* Frame Styles */
+.preview-frame {
+    width: 100%;
+    height: 85vh;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.35s ease;
+}
+
+/* Device Sizes */
+.preview-desktop {
+    max-width: 100%;
+}
+
+.preview-tablet {
+    width: 568px; /* أفضل مقاس للتابلت */
+}
+
+.preview-mobile {
+    width: 375px;
+}
+
+/* Toolbar */
+.preview-toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.preview-btn {
+    padding: 6px 16px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.preview-btn.active {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+</style>
+
+<!-- ============================== -->
+<!--         MAIN PREVIEW           -->
+<!-- ============================== -->
+<div class="container preview-section">
+
+    <h2 class="fw-bold mb-4">
+        <i class="fa-solid fa-eye text-primary me-2"></i>
+        Portfolio Full Preview
+    </h2>
+
+    <!-- Toolbar -->
+    <div class="preview-toolbar">
+        <button class="preview-btn" data-size="desktop">
+            <i class="fa-solid fa-desktop me-1"></i> Desktop
+        </button>
+
+        <button class="preview-btn" data-size="tablet">
+            <i class="fa-solid fa-tablet-screen-button me-1"></i> Tablet
+        </button>
+
+        <button class="preview-btn" data-size="mobile">
+            <i class="fa-solid fa-mobile-screen me-1"></i> Mobile
+        </button>
+    </div>
+
+    <!-- Preview Frame -->
+    <div class="preview-container">
+        <iframe id="previewFrame"
+                src="{% url 'portfolios:template_preview_view' %}"
+                class="preview-frame preview-desktop"
+                frameborder="0">
+        </iframe>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-4 text-center">
+        <a href="{% url 'portfolios:edit_portfolio_view' %}" class="btn btn-outline-primary me-2">
+            <i class="fa-solid fa-pen-to-square me-1"></i> Edit Again
+        </a>
+
+        <a href="{% url 'portfolios:publish_portfolio' %}" class="btn btn-success">
+            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Publish
+        </a>
+    </div>
+
+</div>
+
+<!-- ============================== -->
+<!--             SCRIPT             -->
+<!-- ============================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const frame = document.getElementById("previewFrame");
+    const buttons = document.querySelectorAll(".preview-btn");
+
+    // Toggle device sizes
+    buttons.forEach(btn => {
+        btn.addEventListener("click", function () {
+
+            const size = this.dataset.size;
+
+            frame.classList.remove("preview-desktop", "preview-tablet", "preview-mobile");
+            frame.classList.add("preview-" + size);
+
+            buttons.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+
+    // Set default mode
+    document.querySelector('[data-size="desktop"]').click();
+});
+
+// Receive live preview updates
+window.addEventListener("message", function (event) {
+    console.log("RECEIVED", event.data);
+    if (!event.data) return;
+
+    document.getElementById("previewFrame").contentWindow.postMessage(event.data, "*");
+});
+</script>
+
+{% endblock %}

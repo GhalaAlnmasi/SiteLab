@@ -1,0 +1,72 @@
+{# portfolios/templates/portfolios/preview_base.html #}
+{% load static %}
+{% load portfolio_extras %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS Animation Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.svg' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f3f4ff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+
+{% include portfolio.template.template_path with portfolio=portfolio contact_form=contact_form preview_mode=True %}
+
+<script>
+  window.addEventListener("message", function (event) {
+      if (!event.data || typeof event.data !== "object") return;
+
+      const data = event.data;
+
+      Object.keys(data).forEach(key => {
+          const value = data[key] || "";
+
+          document.querySelectorAll(`[data-field="${key}"]`).forEach(el => {
+
+              if (el.tagName === "IMG") {
+                  if (value) el.src = value;
+                  return;
+              }
+
+              if (el.tagName === "A") {
+                  el.href = value || "#";
+                  if (!el.textContent.trim()) {
+                      el.textContent = value ? "Visit" : "";
+                  }
+                  return;
+              }
+
+              el.textContent = value;
+          });
+      });
+  });
+</script>
+
+</body>
+</html>

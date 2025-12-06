@@ -11,6 +11,7 @@ urlpatterns = [
     path('portfolio/delete/', views.delete_portfolio, name='delete_portfolio'),
     path('review/delete/<int:review_id>/', views.delete_review, name='delete_review'),
     path('custom/delete/<int:request_id>/', views.delete_custom_request, name='delete_custom_request'),
+    path("messages/", views.contact_messages_view, name="contact_messages_view"),
 
 
 ]

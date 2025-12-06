@@ -37,11 +37,9 @@ class RegisterForm(forms.ModelForm):
         return cleaned
     
     def save(self, commit=True):
-        # استدعاء دالة save الأصلية لكن لا تقم بحفظها في قاعدة البيانات (commit=False)
+
         user = super().save(commit=False)
         
-        # استخدام set_password لتشفير كلمة المرور وتعيينها للمستخدم
-        # هذا يضمن أن كلمة المرور مشفرة قبل الحفظ
         user.set_password(self.cleaned_data["password"])
         
         if commit:

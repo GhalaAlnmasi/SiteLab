@@ -1,0 +1,386 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% load portfolio_extras %}
+
+{% block title %}Edit Portfolio - SiteLab{% endblock %}
+
+{% block content %}
+
+<!-- Blobs Background -->
+<div class="blob blob-1" style="top: 10%; left: -5%;"></div>
+<div class="blob blob-2" style="bottom: 10%; right: -5%;"></div>
+
+<!-- PAGE HEADER -->
+<section class="py-5" style="padding-top: 6rem !important; padding-bottom: 2rem !important;">
+    <div class="container" data-aos="fade-down">
+        <p class="text-start text-primary fw-bold text-uppercase small mb-3">
+            <a href="{% url 'main:home' %}" class="text-primary text-decoration-none">Home</a> /
+            <a href="{% url 'portfolios:choose_template_view' %}"
+                class="text-primary text-decoration-none">Templates</a> /
+            <span class="text-dark">Editor</span>
+        </p>
+
+        <h1 class="display-5 fw-bolder mb-1">
+            <i class="fa-solid fa-paint-brush text-primary me-3"></i>
+            Customize Your <span class="text-gradient">Portfolio</span>
+        </h1>
+
+        <p class="lead text-muted small">
+            Template: {{ portfolio.template.name }} (ID: {{ portfolio.template.id }})
+        </p>
+    </div>
+</section>
+
+<!-- MAIN EDITOR SECTION -->
+<section class="pb-5">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- LEFT SIDE (FORM) -->
+            <div class="col-lg-5">
+                <div class="card shadow border-0">
+                    <div class="card-body p-4">
+
+                        <h4 class="card-title fw-bold mb-4">Content Editor</h4>
+
+                        <form method="post" id="portfolio-form" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- CHANGE TEMPLATE -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Change Template</label>
+                                {{ form.template }}
+                                <div class="form-text">Changing the template will reload the editor.</div>
+                            </div>
+
+                            <!-- PERSONAL INFO -->
+                            <h5 class="fw-bold text-primary border-bottom pb-2 mb-3 mt-4">Personal Details</h5>
+                            
+                            <!-- AVATAR FIELD -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Avatar</label>
+                            
+                                {% if portfolio.avatar %}
+                                <div class="mb-2">
+                                    <img src="{{ portfolio.avatar.url }}"
+                                         style="width:120px;height:120px;object-fit:cover;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);">
+                                </div>
+                                {% endif %}
+                            
+                                <label for="id_avatar" class="upload-avatar-btn">Choose Image</label>
+                            
+                                {{ form.avatar }}
+                            
+                                <div class="form-text">Upload profile image (JPG/PNG)</div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ form.first_name.label }}</label>
+                                    {{ form.first_name }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ form.last_name.label }}</label>
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.tagline.label }}</label>
+                                {{ form.tagline }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.about.label }}</label>
+                                {{ form.about }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">{{ form.contact_email.label }}</label>
+                                {{ form.contact_email }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">{{ form.instagram.label }}</label>
+                                {{ form.instagram }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">{{ form.twitter.label }}</label>
+                                {{ form.twitter }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">{{ form.website.label }}</label>
+                                {{ form.website }}
+                            </div>
+
+                            <!-- PROJECTS -->
+                            <h5 class="fw-bold text-primary border-bottom pb-2 mb-3 mt-4">Projects (Up to 3)</h5>
+
+                            {% for i in "123" %}
+                            {% with field_title="project"|add:i|add:"_title" %}
+                            {% with field_desc="project"|add:i|add:"_description" %}
+                            {% with field_url="project"|add:i|add:"_url" %}
+
+                            <div class="card bg-light p-3 mb-4">
+                                <h6 class="fw-bold mb-3">Project {{ i }}</h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label small">Title</label>
+                                    {{ form|get_field:field_title }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small">Description</label>
+                                    {{ form|get_field:field_desc }}
+                                </div>
+
+                                <div class="mb-1">
+                                    <label class="form-label small">URL</label>
+                                    {{ form|get_field:field_url }}
+                                </div>
+                            </div>
+
+                            {% endwith %}
+                            {% endwith %}
+                            {% endwith %}
+                            {% endfor %}
+
+
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-white border-0 p-4">
+                        <div class="d-grid gap-2">
+                            <button type="submit" form="portfolio-form" name="save"
+                                class="btn btn-secondary btn-lg fw-bold">
+                                <i class="fa-solid fa-save me-2"></i> Save Changes
+                            </button>
+
+                            <a href="{% url 'portfolios:preview_view' %}" target="_blank"
+                                class="btn btn-info btn-lg fw-bold text-white">
+                                <i class="fa-solid fa-expand me-2"></i> Full Page Preview
+                            </a>
+
+                            <a href="{% url 'portfolios:publish_portfolio' %}" class="btn btn-primary btn-lg fw-bold">
+                                <i class="fa-solid fa-cloud-upload-alt me-2"></i> Publish Portfolio
+                            </a>
+                        </div>
+
+                        <p class="small text-muted text-center mt-3">
+                            Your changes save automatically — Publish to make them live.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE (LIVE PREVIEW) -->
+            <div class="col-lg-7">
+
+                <div class="preview-toolbar mb-3">
+                    <button class="preview-btn" data-size="desktop">
+                        <i class="fa-solid fa-desktop"></i> Desktop
+                    </button>
+                    <button class="preview-btn" data-size="tablet">
+                        <i class="fa-solid fa-tablet-screen-button"></i> Tablet
+                    </button>
+                    <button class="preview-btn" data-size="mobile">
+                        <i class="fa-solid fa-mobile-screen"></i> Mobile
+                    </button>
+                </div>
+
+                <div class="preview-wrapper">
+                    <div id="deviceFrame" class="device-frame device-desktop">
+                        <iframe src="{% url 'portfolios:template_preview_view' %}" id="live-preview"></iframe>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+        </div>
+    </div>
+</section>
+
+<style>
+    .upload-avatar-btn {
+    background: #2575FC;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+.upload-avatar-btn:hover {
+    background: #1a5edb;
+}
+    .hidden-file-input {
+    display: none;
+    }   
+    @media (max-width: 991px) {
+        .col-lg-7 {
+            order: 1;
+            /* preview on top */
+        }
+    }
+
+    .preview-wrapper {
+        background: #e9ecef;
+        padding: 25px;
+        border-radius: 14px;
+        min-height: 780px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .device-frame {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.35s ease;
+        flex-shrink: 0;
+    }
+
+    /* Desktop is full width */
+    .device-desktop {
+        width: 100%;
+        max-width: 100%;
+        height: 760px;
+    }
+
+    /* Tablet centered */
+    .device-tablet {
+        width: 568px;
+        height: 760px;
+    }
+
+    /* Mobile centered */
+    .device-mobile {
+        width: 375px;
+        height: 760px;
+    }
+
+
+    /* Toolbar buttons */
+    .preview-toolbar {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .preview-btn {
+        padding: 6px 14px;
+        background: #fff;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .preview-btn.active {
+        background: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+
+    .device-frame iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const form = document.getElementById("portfolio-form");
+        const iframe = document.getElementById("live-preview");
+
+        let saveTimer;
+
+        function collect() {
+            const fields = {};
+            form.querySelectorAll("input, textarea, select").forEach(f => {
+                if (f.name !== "csrfmiddlewaretoken") {
+                    let value = f.value || "";
+                    if (value === "null" || value === null) value = "";
+                    fields[f.name] = value;
+                }
+            });
+            return fields;
+        }
+
+        function updatePreview() {
+            iframe.contentWindow.postMessage(collect(), "*");
+        }
+
+        function debounceSave() {
+            clearTimeout(saveTimer);
+            updatePreview();
+
+            saveTimer = setTimeout(() => {
+                const data = new FormData(form);
+                fetch(window.location.href, {
+                    method: "POST",
+                    body: data,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+            }, 400);
+        }
+
+        form.querySelectorAll("input, textarea, select").forEach(el => {
+            el.addEventListener("input", debounceSave);
+        });
+
+        iframe.onload = function () {
+            setTimeout(updatePreview, 200);
+        };
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const frame = document.getElementById("deviceFrame");
+        const buttons = document.querySelectorAll(".preview-btn");
+
+        buttons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                const size = this.dataset.size;
+
+                frame.className = "device-frame device-" + size;
+
+                buttons.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+
+        document.querySelector('[data-size="desktop"]').click();
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const input = document.getElementById("id_avatar");
+    const label = document.querySelector("label[for='id_avatar']");
+    
+    label.addEventListener("click", () => {
+        input.click();
+    });
+    });
+
+</script>
+
+
+{% endblock %}

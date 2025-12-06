@@ -1,33 +1,33 @@
 {% extends 'main/base.html' %}
 {% load static %}
-{% block title %}Portfolio Published! - SiteLab{% endblock %}
+{% block title %}Portfolio Already Published - SiteLab{% endblock %}
 
 {% block content %}
 
 <!-- Blobs -->
-<div class="blob blob-1" style="top: 25%; left: 70%;"></div>
-<div class="blob blob-2" style="bottom: 10%; right: 20%;"></div>
+<div class="blob blob-1" style="top: 20%; left: 75%;"></div>
+<div class="blob blob-2" style="bottom: 12%; right: 25%;"></div>
 
 <section class="py-5 text-center" style="padding-top: 10rem !important; padding-bottom: 10rem !important;">
     <div class="container" data-aos="zoom-in">
 
-        <!-- Success Icon -->
-        <i class="fa-solid fa-circle-check display-1 text-success mb-4 animate__animated animate__tada"></i>
+        <!-- Icon -->
+        <i class="fa-solid fa-circle-info display-1 text-primary mb-4 animate__animated animate__pulse"></i>
 
         <!-- Heading -->
-        <h1 class="display-3 fw-bolder mb-3">
-            Portfolio <span class="text-gradient">Published!</span>
+        <h1 class="display-4 fw-bolder mb-3">
+            Portfolio <span class="text-gradient">Already Published</span>
         </h1>
 
         <p class="lead text-muted mx-auto" style="max-width: 600px;">
-            Congratulations! Your new professional website is live and ready for the world.
-            You can view it now or return to your dashboard.
+            Your portfolio is already live!  
+            You can visit it anytime or make edits from your dashboard.
         </p>
 
         <!-- URL Box -->
         <div class="glass-card p-3 d-inline-block mt-4 mb-5 shadow-lg">
             <h5 class="fw-bold mb-0 text-primary">
-                Your Live URL:
+                Current Live URL:
                 <a href="{{ live_url }}" target="_blank" class="text-dark text-decoration-none ms-2">
                     {{ live_url }}
                 </a>
@@ -40,8 +40,8 @@
                 View Live Site <i class="fa-solid fa-up-right-from-square ms-2"></i>
             </a>
 
-            <a href="{% url 'panel:panel_view' %}" class="btn btn-dark btn-lg shadow-sm my-auto">
-                Go to your panel
+            <a href="{% url 'portfolios:edit_portfolio_view' %}" class="btn btn-dark btn-lg shadow-sm my-auto">
+                Edit Portfolio
             </a>
         </div>
 

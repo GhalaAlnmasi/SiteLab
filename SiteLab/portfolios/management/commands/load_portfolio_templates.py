@@ -2,23 +2,50 @@ from django.core.management.base import BaseCommand
 from portfolios.models import PortfolioTemplate
 
 class Command(BaseCommand):
-    help = "Load mock portfolio templates into the database"
+    help = "Load portfolio templates"
 
     def handle(self, *args, **kwargs):
-        MOCK_TEMPLATES = [
-            {'name': 'Architect Minimal', 'description': 'A clean, typography-focused design perfect for designers and writers.', 'icon': 'fa-solid fa-pen-nib', 'template_path': 'portfolios/arch_minimal.html'},
-            {'name': 'Professional Designer', 'description': 'A modern, image-heavy layout for creative professionals.', 'icon': 'fa-solid fa-palette', 'template_path': 'portfolios/pro_designer.html'},
-            {'name': 'Creative Photographer', 'description': 'Focus on high-resolution imagery and clean grids.', 'icon': 'fa-solid fa-camera', 'template_path': 'portfolios/creative_photographer.html'},
-            {'name': 'Developer Terminal', 'description': 'A dark-mode, code-centric theme for software engineers.', 'icon': 'fa-solid fa-terminal', 'template_path': 'portfolios/dev_terminal.html'},
+
+        TEMPLATES = [
+            {
+                "slug": "arch-minimal",
+                "name": "Architect Minimal",
+                "description": "Clean layout with strong typography",
+                "icon_class": "fa-solid fa-pen-nib",
+                "template_path": "portfolios/templates_pack/arch_minimal.html",
+                "preview_partial": "portfolios/templates_pack/arch_minimal_preview.html"
+            },
+            {
+                "slug": "pro-designer",
+                "name": "Professional Designer",
+                "description": "Modern layout for creative designers",
+                "icon_class": "fa-solid fa-palette",
+                "template_path": "portfolios/templates_pack/pro_designer.html",
+                "preview_partial": "portfolios/templates_pack/pro_designer_preview.html",
+            },
+            {
+                "slug": "creative-photographer",
+                "name": "Creative Photographer",
+                "description": "Full-image template for photographers",
+                "icon_class": "fa-solid fa-camera",
+                "template_path": "portfolios/templates_pack/creative_photographer.html",
+                "preview_partial": "portfolios/templates_pack/creative_photographer_preview.html",
+                
+            },
+            {
+                "slug": "dev-terminal",
+                "name": "Developer Terminal",
+                "description": "Dark theme like a real terminal",
+                "icon_class": "fa-solid fa-terminal",
+                "template_path": "portfolios/templates_pack/dev_terminal.html",
+                "preview_partial": "portfolios/templates_pack/dev_terminal_preview.html",
+            },
         ]
 
-        for tmpl in MOCK_TEMPLATES:
+        for data in TEMPLATES:
             PortfolioTemplate.objects.update_or_create(
-                name=tmpl['name'],
-                defaults={
-                    'description': tmpl['description'],
-                    'icon': tmpl['icon'],
-                    'template_path': tmpl['template_path'],
-                }
+                slug=data["slug"],
+                defaults=data
             )
+
         self.stdout.write(self.style.SUCCESS("Portfolio templates loaded successfully."))

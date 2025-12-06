@@ -161,30 +161,86 @@
 
         <!-- ---------------- Portfolio Tab ---------------- -->
         <div class="tab-pane fade show active" id="portfolio" role="tabpanel">
-            {% if portfolio %}
-            <div class="card p-4 mb-4">
-                <h5>My Portfolio</h5>
-
-                {% if portfolio.template %}
-                <p><strong>Template:</strong> {{ portfolio.template.name }}</p>
-                {% else %}
-                <p>No template selected.</p>
+            <a href="{% url 'panel:contact_messages_view' %}" class="btn btn-primary position-relative">
+                <i class="bi bi-envelope-fill me-2"></i>
+                Messages
+            
+                {% if new_messages_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ new_messages_count }}
+                    </span>
                 {% endif %}
+            </a>
 
-                <!-- Save Portfolio Form -->
-                <form method="post" enctype="multipart/form-data" class="mb-2">
-                    {% csrf_token %}
-                    {{ portfolio_form.as_p }}
-                    <button type="submit" name="save_portfolio" class="btn btn-primary btn-sm">Save Portfolio</button>
-                </form>
+            <div class="mt-1 card p-4 mb-4 shadow-sm border-0" style="background:rgba(255,255,255,0.7); backdrop-filter:blur(6px);">
+        
+                <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-address-card text-primary"></i>
+                    My Portfolio
+                </h4>
 
-                <!-- Delete Portfolio (Outside the form!) -->
-                <a href="{% url 'panel:delete_portfolio' %}" class="btn btn-danger btn-sm">Delete Portfolio</a>
+                {% if portfolio %}
+        
+                <!-- Template Info -->
+                <div class="mb-3">
+                    <p class="mb-1">
+                        <strong>Selected Template:</strong>
+                        {% if portfolio.template %}
+                            <span class="text-primary">{{ portfolio.template.name }}</span>
+                        {% else %}
+                            <span class="text-danger">No template selected</span>
+                        {% endif %}
+                    </p>
+        
+                    <a href="{% url 'portfolios:choose_template_view' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-palette me-2"></i> Change Template
+                    </a>
+                </div>
+        
+                <hr>
+        
+                <!-- Main Actions -->
+                <div class="d-flex flex-wrap gap-2">
+        
+                    <a href="{% url 'portfolios:edit_portfolio_view' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-pen-nib me-1"></i> Edit Portfolio
+                    </a>
+        
+                    <a href="{% url 'portfolios:preview_view' %}" class="btn btn-secondary" target="_blank">
+                        <i class="fa-solid fa-eye me-1"></i> Live Preview
+                    </a>
+        
+                    {% if portfolio.is_published %}
+                        <a href="{% url 'portfolios:published_view' portfolio.user.username %}"
+                           class="btn btn-success" target="_blank">
+                            <i class="fa-solid fa-globe me-1"></i> View Published
+                        </a>
+                    {% else %}
+                        <a href="{% url 'portfolios:publish_portfolio' %}" class="btn btn-warning text-dark">
+                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Publish Portfolio
+                        </a>
+                    {% endif %}
+        
+                    <a href="{% url 'panel:delete_portfolio' %}" class="btn btn-danger ms-auto">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+        
+                </div>
+        
+                {% else %}
+        
+                <p class="text-muted">You don't have a portfolio yet.</p>
+        
+                <a href="{% url 'portfolios:choose_template_view' %}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus-circle me-1"></i> Create Portfolio
+                </a>
+        
+                {% endif %}
+        
             </div>
-            {% else %}
-            <p>You don't have a portfolio yet.</p>
-            {% endif %}
+        
         </div>
+        
 
         <!-- ---------------- Reviews Tab ---------------- -->
         <div class="tab-pane fade" id="reviews" role="tabpanel">

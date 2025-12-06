@@ -25,6 +25,10 @@ def panel_view(request):
             p.save()
             messages.success(request, "Portfolio updated successfully!")
             return redirect('panel:panel_view')
+        
+    new_messages_count = 0
+    if portfolio:
+        new_messages_count = portfolio.messages.filter(responded=False).count()
 
     # ---------- Reviews ----------
     reviews = user.reviews.all().order_by('-created_at')
@@ -81,6 +85,7 @@ def panel_view(request):
         'custom_form': custom_form,
         'privacy_form': privacy_form,
         'recent_actions': recent_actions,
+        'new_messages_count': new_messages_count,
     }
 
     return render(request, 'panel/user_panel.html', context)
@@ -148,3 +153,16 @@ def delete_custom_request(request, request_id):
     req = get_object_or_404(CustomRequest, pk=request_id, user=request.user)
     req.delete()
     return redirect('panel:panel_view')
+
+@login_required
+def contact_messages_view(request):
+    portfolio = getattr(request.user, 'portfolio', None)
+    if not portfolio:
+        messages.error(request, "Portfolio not found.")
+        return redirect("panel:panel_view")
+
+    messages_list = portfolio.messages.all().order_by('-created_at')
+
+    return render(request, "panel/contact_messages_list.html", {
+        "messages_list": messages_list
+    })

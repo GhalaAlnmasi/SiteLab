@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+{% block title %}Contact Messages{% endblock %}
+
+{% block content %}
+
+<div style="min-height:100vh; padding:120px 20px 60px; display:flex; flex-direction:column; align-items:center;">
+
+    <!-- Title -->
+    <h2 style="font-size:38px; font-weight:700; color:#1f2937; margin-bottom:40px;">
+        Contact Messages
+    </h2>
+
+    {% if messages_list %}
+    <div style="
+        width:100%;
+        max-width:1100px;
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap:25px;
+    ">
+
+        {% for msg in messages_list %}
+        <div style="
+            background:white;
+            border-radius:18px;
+            padding:25px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.08);
+            transition:.3s;
+            border-left:6px solid {% if not msg.responded %}#3b82f6{% else %}#10b981{% endif %};
+        ">
+
+            <!-- Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h4 style="margin:0; font-size:20px; font-weight:700; color:#111827;">
+                    {{ msg.name }}
+                </h4>
+
+                {% if not msg.responded %}
+                <span style="
+                    background:#3b82f6;
+                    color:white;
+                    padding:4px 12px;
+                    border-radius:10px;
+                    font-size:12px;
+                    font-weight:600;
+                ">New</span>
+                {% else %}
+                <span style="
+                    background:#10b981;
+                    color:white;
+                    padding:4px 12px;
+                    border-radius:10px;
+                    font-size:12px;
+                    font-weight:600;
+                ">Responded</span>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <p style="margin:0; color:#6b7280; font-size:14px;">
+                {{ msg.email }}
+            </p>
+
+            <hr style="margin:15px 0; opacity:0.2;">
+
+            <!-- Message -->
+            <p style="font-size:15px; color:#374151; line-height:1.6;">
+                {{ msg.message }}
+            </p>
+
+            <div style="margin-top:18px; display:flex; justify-content:space-between; align-items:center;">
+                <!-- Date -->
+                <small style="color:#9ca3af;">
+                    {{ msg.created_at|date:"M d, Y — H:i" }}
+                </small>
+
+                <!-- Respond Button (optional later) -->
+                <button style="
+                    background:#2563eb;
+                    color:white;
+                    border:none;
+                    padding:6px 14px;
+                    border-radius:8px;
+                    font-size:13px;
+                    cursor:pointer;
+                ">
+                    Mark as Responded
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+        <p style="color:#6b7280; font-size:18px;">No messages yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

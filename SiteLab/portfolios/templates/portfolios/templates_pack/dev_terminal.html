@@ -1,0 +1,325 @@
+{% load portfolio_extras %}
+
+<style>
+/* ===== TERMINAL DEV THEME ===== */
+:root {
+    --bg-dark: #0d1117;
+    --bg-card: #161b22;
+    --green: #2ea043;
+    --blue: #58a6ff;
+    --text-light: #c9d1d9;
+    --text-muted: #8b949e;
+    --radius: 10px;
+    --transition: .25s ease;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+body {
+    font-family: var(--font-mono);
+    background: var(--bg-dark);
+    color: var(--text-light);
+}
+
+/* ===== HERO SECTION ===== */
+.hero-dev {
+    padding: 90px 20px 70px;
+    text-align: center;
+    background: linear-gradient(180deg, #0f1521, #0d1117);
+    border-bottom: 2px solid #1f242d;
+}
+
+.dev-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(88,166,255,0.4);
+    border: 3px solid var(--blue);
+}
+
+.dev-name {
+    margin-top: 22px;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.dev-tagline {
+    margin-top: 8px;
+    font-size: 1.15rem;
+    color: var(--green);
+}
+
+.dev-about {
+    max-width: 760px;
+    margin: 20px auto 0;
+    line-height: 1.7;
+    color: var(--text-muted);
+}
+
+/* ===== SOCIAL ===== */
+.social-dev {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-dev a {
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(88,166,255,0.15);
+    border: 1px solid rgba(88,166,255,0.4);
+    color: var(--blue);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.social-dev a:hover {
+    background: rgba(88,166,255,0.3);
+}
+
+/* ===== PROJECTS (Code Blocks) ===== */
+.projects-dev {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.projects-dev h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.projects-dev p {
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.project-block {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 22px;
+    text-align: left;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.25);
+    border: 1px solid #1f242d;
+    transition: var(--transition);
+}
+
+.project-block:hover {
+    transform: translateY(-5px);
+    border-color: var(--blue);
+    box-shadow: 0px 0px 25px rgba(88,166,255,0.15);
+}
+
+.proj-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--blue);
+}
+
+.proj-desc {
+    font-size: .95rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.proj-btn {
+    margin-top: 12px;
+    background: var(--green);
+    color: #000;
+    padding: 7px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    transition: var(--transition);
+}
+
+.proj-btn:hover {
+    opacity: .8;
+}
+
+/* GRID */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    justify-content: center;
+}
+
+.col-md-4 {
+    width: 100%;
+}
+@media (min-width: 768px) {
+    .col-md-4 { width: calc(33.333% - 22px); }
+}
+
+/* ===== CONTACT FORM ===== */
+.contact-dev {
+    max-width: 700px;
+    margin: 60px auto;
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: var(--radius);
+    border: 1px solid #1f242d;
+}
+
+.contact-dev h3 { margin-bottom: 8px; }
+.contact-dev p { color: var(--text-muted); }
+
+.contact-dev button {
+    width: 100%;
+    background: var(--blue);
+    border: none;
+    color: #000;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 12px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.contact-dev button:hover {
+    opacity: .85;
+}
+
+/* ===== FOOTER ===== */
+.footer-dev {
+    text-align: center;
+    padding: 30px 0;
+    color: var(--text-muted);
+    font-size: .9rem;
+}
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero-dev">
+
+    {% if portfolio.avatar %}
+    <img src="{{ portfolio.avatar.url }}" class="dev-avatar" data-field="avatar">
+    {% endif %}
+
+    <h1 class="dev-name">
+        <span data-field="first_name">{{ portfolio.first_name }}</span>
+        <span data-field="last_name">{{ portfolio.last_name }}</span>
+    </h1>
+
+    <p class="dev-tagline" data-field="tagline">
+        {{ portfolio|field_or_template:"tagline" }}
+    </p>
+
+    <p class="dev-about" data-field="about">
+        {{ portfolio|field_or_template:"about" }}
+    </p>
+
+    <div class="social-dev">
+        <a href="{{ portfolio.instagram|default:'#' }}" data-field="instagram">Instagram</a>
+        <a href="{{ portfolio.twitter|default:'#' }}" data-field="twitter">Twitter</a>
+        <a href="{{ portfolio.website|default:'#' }}" data-field="website">Website</a>
+    </div>
+
+</section>
+
+<!-- ===== PROJECTS ===== -->
+<section class="projects-dev">
+
+    <h2>Projects</h2>
+    <p>Highlighted development work & code projects.</p>
+
+    <div class="row">
+
+        <!-- Project 1 -->
+        <div class="col-md-4">
+            <div class="project-block">
+                <div class="proj-title" data-field="project1_title">
+                    {{ portfolio.project1_title }}
+                </div>
+                <div class="proj-desc" data-field="project1_description">
+                    {{ portfolio.project1_description }}
+                </div>
+                <a class="proj-btn" data-field="project1_url"
+                   href="{{ portfolio.project1_url|default:'#' }}">View Code</a>
+            </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="col-md-4">
+            <div class="project-block">
+                <div class="proj-title" data-field="project2_title">
+                    {{ portfolio.project2_title }}
+                </div>
+                <div class="proj-desc" data-field="project2_description">
+                    {{ portfolio.project2_description }}
+                </div>
+                <a class="proj-btn" data-field="project2_url"
+                   href="{{ portfolio.project2_url|default:'#' }}">View Code</a>
+            </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="col-md-4">
+            <div class="project-block">
+                <div class="proj-title" data-field="project3_title">
+                    {{ portfolio.project3_title }}
+                </div>
+                <div class="proj-desc" data-field="project3_description">
+                    {{ portfolio.project3_description }}
+                </div>
+                <a class="proj-btn" data-field="project3_url"
+                   href="{{ portfolio.project3_url|default:'#' }}">View Code</a>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% if messages %}
+<div style="max-width:700px;margin:0 auto 20px auto;">
+    {% for message in messages %}
+    <div style="
+        padding:12px 16px;
+        border-radius:8px;
+        margin-bottom:10px;
+        font-size:0.95rem;
+        color:white;
+        background:
+            {% if message.tags == 'success' %} #16a34a;
+            {% elif message.tags == 'error' %} #dc2626;
+            {% else %} #475569;
+            {% endif %}
+    ">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ===== CONTACT ===== -->
+<section class="contact-dev">
+
+    <h3>Contact Me</h3>
+    <p>Have a software idea or need a developer?</p>
+
+    {% if not preview_mode %}
+        <form method="POST" action="{% url 'portfolios:submit_contact_view' portfolio.user.username %}">
+    {% else %}
+        <form>
+    {% endif %}
+
+        {% csrf_token %}
+        {{ contact_form.as_p }}
+
+        <button {% if preview_mode %}disabled{% endif %}>
+            {% if preview_mode %}Preview Mode{% else %}Send Message{% endif %}
+        </button>
+    </form>
+
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer-dev">
+    © <span data-field="first_name">{{ portfolio.first_name }}</span>
+      <span data-field="last_name">{{ portfolio.last_name }}</span> — Developer Portfolio
+</footer>

@@ -1,0 +1,62 @@
+{% load static %}
+{% load portfolio_extras %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ portfolio.display_name }} — Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Global Frameworks -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<!-- GLOBAL DARK MODE BUTTON -->
+<button id="themeToggle" class="btn btn-sm btn-light position-fixed" 
+        style="top:16px;right:16px;z-index:9999;">
+    <i id="themeIcon" class="fa-regular fa-moon"></i>
+</button>
+
+<!-- LOAD THE SELECTED TEMPLATE -->
+{% include portfolio.template.template_path with portfolio=portfolio preview_mode=False %}
+
+
+<!-- FOOTER -->
+<footer class="text-center py-4 text-muted small">
+    © {{ portfolio.display_name }} — Portfolio
+</footer>
+
+
+<!-- GLOBAL SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init({ once:true, duration:650 });
+
+    const body = document.body;
+    const icon = document.getElementById('themeIcon');
+    const stored = localStorage.getItem('portfolio-theme');
+
+    if (stored === 'dark') {
+        body.classList.add('dark-mode');
+        icon.classList.replace('fa-moon','fa-sun');
+    }
+
+    document.getElementById('themeToggle').onclick = () => {
+        body.classList.toggle('dark-mode');
+        const dark = body.classList.contains('dark-mode');
+        icon.classList.toggle('fa-moon', !dark);
+        icon.classList.toggle('fa-sun', dark);
+        localStorage.setItem('portfolio-theme', dark ? 'dark':'light');
+    };
+</script>
+
+</body>
+</html>
