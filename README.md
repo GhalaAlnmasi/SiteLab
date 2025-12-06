@@ -82,3 +82,68 @@ These enhance the user experience and provide extra value:
 ## Wireframes
 [Link to Wireframes](https://www.figma.com/design/4GdAhLhsxh2jDLx6ouj0L9/SiteLab?node-id=0-1&t=P45HGFH2GdfFy7uO-1)
 
+---
+
+# 🚀 How to Set Up & Run the Project
+
+Follow these steps to set up the project locally:
+
+## 1️⃣ Clone the Repository
+
+```bash
+git clone <repo-link>
+cd SiteLab 
+```
+
+## 2️⃣ Create a Virtual Environment
+
+Mac / Linux:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+Windows:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+## 3️⃣ Install Required Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## 4️⃣ Apply Database Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+5️⃣ Load Portfolio Templates (Important)
+This command inserts the default portfolio templates into the database:
+
+```bash
+python manage.py load_portfolio_templates
+```
+
+## 6️⃣ Create Superuser (Optional but Recommended)
+
+```bash
+python manage.py createsuperuser
+```
+## 7️⃣ Collect Static Files (For Production)
+
+```bash
+python manage.py collectstatic
+```
+
+## 8️⃣ Run the Development Server
+
+```bash
+python manage.py runserver
+```
+The project will now be accessible at:
+
+👉 http://127.0.0.1:8000/
