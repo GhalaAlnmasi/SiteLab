@@ -41,8 +41,8 @@
 <div class="t4-body">
     <nav class="t4-navbar navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-4 text-warning" href="#">
-                $ {{ p.personal.name|upper }} >
+            <a class="navbar-brand fw-bold fs-4 text-warning" href="#" data-field="full_name">
+                $ {{ data.first_name|upper }} {{ data.last_name|upper }} >
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#t4Navbar">
                 <span class="text-warning">|||</span>
@@ -60,57 +60,49 @@
     <header class="t4-hero">
         <div class="container">
             <span class="text-warning">// Welcome to the Terminal</span>
-            <h1 class="display-3 fw-bolder mt-2 mb-3 text-light">{{ p.personal.title }}</h1>
-            <p class="lead text-success">{{ p.personal.tagline }}</p>
+            <h1 class="display-3 fw-bolder mt-2 mb-3 text-light" data-field="tagline">{{ data.tagline }}</h1>
+            <p class="lead text-success" data-field="full_name">$ user: {{ data.first_name }} {{ data.last_name }}</p>
         </div>
     </header>
 
     <section id="about" class="t4-section">
         <div class="container">
             <h2 class="fw-bold mb-4 text-warning">About ></h2>
-            <div class="t4-code-block">
-                <pre class="mb-0 text-success">
-> const user = {
-    name: "{{ p.personal.name }}",
-    role: "{{ p.personal.title }}",
-    bio: `{{ p.personal.about_me|truncatechars:300 }}`,
-    status: "Active"
-};
-
-> console.log(user.bio);
-// {{ p.personal.about_me }}
-                </pre>
+            <div class="t4-code-block text-success" data-field="about_me">
+                {{ data.about_me }}
             </div>
         </div>
     </section>
-
-    <section id="projects" class="t4-section">
+    
+   <section id="projects" class="t4-section">
         <div class="container">
             <h2 class="fw-bold mb-4 text-warning">Projects ></h2>
             <div class="row g-4">
-                {% for project in p.projects %}
+                {% for project in data.get_projects_list %}
                 <div class="col-md-6">
-                    <div class="card bg-dark text-success border-success t4-code-block">
+                    <div class="card bg-dark text-success border-success t4-code-block card-project">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold text-light">$ {{ project.title }}</h5>
-                            <p class="card-text small text-success">{{ project.description }}</p>
-                            <span class="small text-warning">Status: Completed</span>
+                            <h5 class="card-title fw-bold text-light" data-field="project{{ forloop.counter }}_title">$ {{ project.title }}</h5>
+                            <p class="card-text small text-success" data-field="project{{ forloop.counter }}_description">{{ project.description }}</p>
+                            {% if project.url %}
+                            <a href="{{ project.url }}" class="small text-warning" target="_blank" data-field="project{{ forloop.counter }}_url">Link: {{ project.url }}</a>
+                            {% endif %}
+                            <span class="small text-warning d-block mt-2">Status: Completed</span>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <p class="text-muted">Projects array is empty. Commit new code.</p>
+                <p class="text-muted">Projects array is empty. Commit new code in the editor.</p>
                 {% endfor %}
             </div>
         </div>
     </section>
-
     <footer id="contact" class="t4-footer text-center">
-        <p class="fw-bold mb-2 text-warning">$ Contact: {{ p.contact.email }}</p>
+        <p class="fw-bold mb-2 text-warning" data-field="contact_email">$ Contact: {{ data.contact_email }}</p>
         <div class="mb-3">
-            <a href="mailto:{{ p.contact.email }}" class="text-success mx-2"><i class="fas fa-envelope fa-lg"></i></a>
-            <a href="{{ p.contact.linkedin }}" target="_blank" class="text-success mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+            <a href="mailto:{{ data.contact_email }}" class="text-success mx-2" data-field="contact_email"><i class="fas fa-envelope fa-lg"></i></a>
+            <a href="#" target="_blank" class="text-success mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
         </div>
-        <p class="small mb-0 opacity-75">// {{ p.personal.name }} - End of File.</p>
+        <p class="small text-muted mb-0" data-field="full_name">System Initialized. Access Granted. | {{ data.first_name }} {{ data.last_name }}</p>
     </footer>
 </div>

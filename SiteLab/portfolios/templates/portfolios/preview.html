@@ -5,36 +5,235 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ template_name }} Preview - SiteLab</title>
     
-    <!-- Load Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Load Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+  <style>
+    body {
+        background-color: #f8f9fa; 
+        margin: 0;
+        padding-top: 56px; 
+    }
+    
+    .preview-control-bar {
+        background-color: #343a40; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 9999 !important; 
+        position: fixed;
+        width: 100%;
+        top: 0;
+    }
 
-    <style>
-        body {
-            padding-top: 0 !important; 
-            margin: 0;
-            min-height: 100vh;
-        }
+    #template-display .fixed-top,
+    #template-display .template-navbar {
+        position: static !important;
+        top: auto !important;
+        z-index: 1; 
+    }
 
-        .template-content-wrapper {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    #template-display .hero-section {
+        padding-top: 3rem !important;
+    }
+    
+    .preview-template-container {
+        min-height: calc(100vh - 56px);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; 
+        padding: 20px 0;
+        overflow-x: hidden;
+    }
+    
+    #template-display {
+        width: 100%;
+        max-width: 100%; 
+        transition: all 0.5s ease-in-out;
+        box-shadow: none;
+        background-color: white; 
+    }
+
+    #template-display.w-mobile {
+        width: 375px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        border-radius: 2px;
+        margin: 0 auto;
+    }
+    #template-display.w-tablet {
+        width: 768px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        border-radius: 2px;
+        margin: 0 auto;
+    }
+    
+    .screen-toggle-btn { 
+        color: #ccc; 
+        border-color: #555; 
+        transition: all 0.2s;
+    }
+    .screen-toggle-btn.active {
+        color: #fff;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+</style>
 </head>
 <body>
-    <div class="template-content-wrapper">
-        {% if template_path %}
-            {% include template_path with data=portfolio_data %}
-        {% else %}
-            <div class="p-5 text-center">
-                <h1 class="text-danger">Template Error</h1>
-                <p>The selected template could not be loaded. Please check your template ID.</p>
+
+    <nav class="navbar navbar-expand-lg preview-control-bar fixed-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center px-4">
+            
+            <a href="{% url 'portfolios:portfolio_edit' %}" class="btn btn-sm btn-outline-light">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to Editor
+            </a>
+
+            <div class="d-flex justify-content-center flex-grow-1">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm screen-toggle-btn" data-width="w-desktop" title="Desktop View">
+                        <i class="fas fa-desktop"></i> Desktop
+                    </button>
+                    <button type="button" class="btn btn-sm screen-toggle-btn" data-width="w-tablet" title="Tablet View">
+                        <i class="fas fa-tablet-alt"></i> Tablet
+                    </button>
+                    <button type="button" class="btn btn-sm screen-toggle-btn" data-width="w-mobile" title="Mobile View">
+                        <i class="fas fa-mobile-alt"></i> Mobile
+                    </button>
+                </div>
             </div>
-        {% endif %}
+            
+            <h6 class="mb-0 text-white-50 small d-none d-md-block">
+                Viewing: {{ template_name }}
+            </h6>
+        </div>
+    </nav>
+
+    <div class="preview-template-container">
+        <div id="template-display">
+            {% if template_path %}
+                {# The portfolio object passed from the view is used as initial data #}
+                {% include template_path with data=portfolio %} 
+            {% else %}
+                <div class="alert alert-danger p-5">
+                    Template could not be loaded. Please check your template selection.
+                </div>
+            {% endif %}
+        </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const templateDisplay = document.getElementById('template-display');
+    const toggleButtons = document.querySelectorAll('.screen-toggle-btn');
+    
+    const getFullName = (data) => {
+        const firstName = data['first_name'] || '';
+        const lastName = data['last_name'] || '';
+        return `${firstName} ${lastName}`.trim();
+    }
+    
+    const updateContent = (data) => {
+        if (!data || typeof data !== 'object') return;
+
+        const liveData = {...data, full_name: getFullName(data)};
+        
+        Object.keys(liveData).forEach(key => {
+            if (key === 'projects' || key === 'full_name') return; 
+
+            const elements = document.querySelectorAll(`[data-field="${key}"]`);
+            elements.forEach(el => {
+                const value = liveData[key] || '';
+                
+                if (el.tagName === 'A' && key === 'contact_email') {
+                    el.href = `mailto:${value}`; 
+                    el.textContent = value;
+                } else if (el.tagName === 'A' && key.endsWith('_url')) {
+                    el.href = value || '#'; 
+                } else {
+                    el.textContent = value;
+                }
+            });
+        });
+        
+        document.querySelectorAll('[data-field="full_name"]').forEach(el => {
+            el.textContent = liveData.full_name;
+        });
+
+
+        const projectCards = document.querySelectorAll('.card-project'); 
+        const incomingProjects = data.projects || []; 
+        
+        projectCards.forEach((card, index) => {
+            const proj = incomingProjects[index];
+            
+            if (proj) {
+                const liveTitle = proj.title || '';
+                const liveDesc = proj.description || '';
+                const liveUrl = proj.url || '#';
+                
+                const title = card.querySelector(`[data-field="project${index+1}_title"]`);
+                const desc = card.querySelector(`[data-field="project${index+1}_description"]`);
+                const url_link = card.querySelector(`[data-field="project${index+1}_url"]`);
+                
+                if (title) title.textContent = liveTitle;
+                if (desc) desc.textContent = liveDesc;
+                
+                if (url_link) {
+                    url_link.href = liveUrl; 
+                    if (url_link.textContent.trim() === '') {
+                        url_link.textContent = 'View Project';
+                    }
+                }
+
+                card.style.display = ''; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        });
+
+    };
+
+
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const newWidthClass = this.getAttribute('data-width');
+            
+            toggleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            const widthMap = {
+                'w-mobile': '375px',
+                'w-tablet': '768px',
+                'w-desktop': '100%'
+            };
+            
+            if (templateDisplay) {
+                templateDisplay.classList.remove('w-mobile', 'w-tablet', 'w-desktop');
+                templateDisplay.classList.add(newWidthClass);
+                templateDisplay.style.maxWidth = widthMap[newWidthClass];
+                templateDisplay.style.width = widthMap[newWidthClass];
+            }
+            
+            const container = document.querySelector('.preview-template-container');
+            if (newWidthClass === 'w-desktop') {
+                 container.style.alignItems = 'flex-start';
+            } else {
+                 container.style.alignItems = 'center';
+            }
+        });
+    });
+    
+    document.querySelector('.screen-toggle-btn[data-width="w-desktop"]').click();
+
+
+    window.addEventListener('message', function(event) {
+        if (event.data && typeof event.data === 'object') {
+            updateContent(event.data);
+        }
+    });
+});
+</script>
 </body>
 </html>

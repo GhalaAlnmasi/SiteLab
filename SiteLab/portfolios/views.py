@@ -1,148 +1,191 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
-from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.db import IntegrityError
+from django.contrib.auth import get_user_model
 
 from .models import Portfolio, PortfolioTemplate
 from .forms import PortfolioForm
 
-# MOCK_USER_PK = 1
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+import json
+from django.http import JsonResponse
+from django.db import IntegrityError 
 
 User = get_user_model()
 
 
 def portfolio_add(request):
+    """
+    Template selection page.
+    """
     templates = PortfolioTemplate.objects.all()
     return render(request, 'portfolios/portfolio-add.html', {'templates': templates})
 
 
-# def _get_portfolio_instance(user_pk, selected_template_id=1):
-#     """Fetch or create a Portfolio instance for a user PK (returns unsaved instance for create branch)."""
-#     try:
-#         portfolio = Portfolio.objects.get(user__pk=user_pk)
-
-#         if portfolio.template_id != int(selected_template_id):
-#             portfolio.template_id = int(selected_template_id)
-#             portfolio.save()
-
-#     except Portfolio.DoesNotExist:
-#         try:
-#             mock_user = User.objects.get(pk=user_pk)
-#             portfolio = Portfolio(user=mock_user, template_id=selected_template_id)
-#         except User.DoesNotExist:
-#             print(f"CRITICAL ERROR: Mock User with PK={user_pk} does not exist. Returning unsaved Portfolio.")
-#             portfolio = Portfolio(template_id=selected_template_id)
-
-#     except Exception as e:
-#         print(f"An unexpected error occurred during portfolio retrieval/creation: {e}")
-#         portfolio = Portfolio(template_id=selected_template_id)
-
-#     return portfolio
-
 @login_required
 def portfolio_edit(request):
+    """
+    Edit the user's Portfolio.
+    Supports AJAX auto-save + live preview.
+    """
     portfolio, created = Portfolio.objects.get_or_create(user=request.user)
-
-    selected_template_id = request.GET.get('template_id') or request.GET.get('template')
-    if selected_template_id:
+    
+    template_id = request.GET.get('template_id')
+    if template_id and (created or not portfolio.template or str(portfolio.template.id) != template_id):
         try:
-            selected_template_id = int(selected_template_id)
-            portfolio.template = PortfolioTemplate.objects.get(pk=selected_template_id)
-            portfolio.save()
-        except PortfolioTemplate.DoesNotExist:
-            pass
+            new_template = PortfolioTemplate.objects.get(id=template_id)
+            portfolio.template = new_template
+            portfolio.save() 
+            
+            if created or str(portfolio.template.id) != template_id:
+                t = portfolio.template
+                portfolio.first_name = portfolio.first_name or t.default_first_name
+                portfolio.last_name = portfolio.last_name or t.default_last_name
+                portfolio.tagline = portfolio.tagline or t.default_tagline
+                portfolio.about_me = portfolio.about_me or t.default_about_me
+                portfolio.contact_email = portfolio.contact_email or t.default_contact_email
 
-    if request.method == "POST":
+                portfolio.save()
+
+            return redirect("portfolios:portfolio_edit")
+
+        except PortfolioTemplate.DoesNotExist:
+            pass 
+
+    
+    if not portfolio.template:
+         return redirect("portfolios:portfolio_add")
+
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            allowed_fields = [
+                'first_name', 'last_name', 'tagline', 'about_me', 'contact_email',
+                'project1_title', 'project1_description', 'project1_url',
+                'project2_title', 'project2_description', 'project2_url',
+                'project3_title', 'project3_description', 'project3_url',
+            ]
+            
+            updates = False
+            for field, value in data.items():
+                if field in allowed_fields:
+                    setattr(portfolio, field, value)
+                    updates = True
+            
+            if updates:
+                portfolio.save(update_fields=data.keys()) 
+            
+            return JsonResponse({'status': 'saved', 'message': 'Portfolio auto-saved.'})
+        
+        except (json.JSONDecodeError, IntegrityError, TypeError) as e:
+            return JsonResponse({'status': 'error', 'message': f'Invalid request or database error: {e}'}, status=400)
+    
+
+    if request.method == 'POST':
         form = PortfolioForm(request.POST, instance=portfolio)
         if form.is_valid():
-            portfolio = form.save(commit=False)
-            if 'publish' in request.POST:
+            form.save()
+            
+            if 'publish_site' in request.POST:
                 portfolio.is_published = True
-            portfolio.save()
+                portfolio.save(update_fields=['is_published'])
+                return redirect("portfolios:publish_success")
+            
+            elif 'unpublish_site' in request.POST:
+                portfolio.is_published = False
+                portfolio.save(update_fields=['is_published'])
+                return redirect("portfolios:portfolio_edit") 
+
             return redirect("portfolios:portfolio_edit")
-    else:
-        form = PortfolioForm(instance=portfolio)
+        
 
-    return render(request, "portfolios/portfolio-edit.html", {
+    form = PortfolioForm(instance=portfolio) 
+    
+    context = {
         "form": form,
-        "current_template": portfolio.template,
-        "templates": PortfolioTemplate.objects.all(),
-        "template_id": portfolio.template_id,
-        "template_name": portfolio.template.name if portfolio.template else "",
-    })
-
-
-def portfolio_published(request):
-    portfolio_instance, portfolio_data = _get_portfolio_data()
-
-    if not portfolio_instance.is_published:
-        edit_url = reverse('portfolios:portfolio_edit')
-        return redirect(f"{edit_url}?template_id={portfolio_instance.template_id}")
-
-    live_url = request.build_absolute_uri(reverse('portfolios:published_view', args=(portfolio_instance.user.username,)))
-    return render(request, 'portfolios/portfolio-published.html', {'live_url': live_url})
-
-
-def _get_portfolio_data(user_id=None):
-    """
-    Helper to fetch or create portfolio data for rendering.
-    If user_id is None, it will try MOCK_USER_PK (dev-only).
-    """
-    if user_id is None:
-        user_id = MOCK_USER_PK
-
-    try:
-        portfolio = Portfolio.objects.get(user__pk=user_id)
-        return portfolio, model_to_dict(portfolio)
-    except Portfolio.DoesNotExist:
-        portfolio = Portfolio()
-        portfolio.template_id = 1
-        return portfolio, model_to_dict(portfolio)
-    except Exception as e:
-        print(f"Error fetching portfolio data: {e}")
-        portfolio = Portfolio()
-        portfolio.template_id = 1
-        return portfolio, model_to_dict(portfolio)
+        "portfolio": portfolio,
+        "template_name": portfolio.template.name,
+        "template_id": portfolio.template.id,
+        "preview_url": reverse("portfolios:preview_view"),
+        "published_url": reverse("portfolios:published_view", args=[request.user.username]),
+    }
+    return render(request, 'portfolios/portfolio-edit.html', context)
 
 
 @login_required
-def preview_view(request):
+def portfolio_published(request):
+    """
+    Landing page after publishing. (Success Message - maps to publish_success URL)
+    """
     portfolio = get_object_or_404(Portfolio, user=request.user)
-
-    return render(request, 'portfolios/preview.html', {
-        "portfolio": portfolio,
-        "template_path": portfolio.get_template_path(),
-        "template": portfolio.template
-    })
-
-
-def published_view(request, username):
-    user = get_object_or_404(User, username=username)
-    portfolio = get_object_or_404(Portfolio, user=user)
 
     if not portfolio.is_published:
         return redirect("portfolios:portfolio_edit")
 
-    return render(request, 'portfolios/published.html', {
+    live_url = request.build_absolute_uri(
+        reverse("portfolios:published_view", args=[request.user.username])
+    )
+
+    context = {
+        "portfolio": portfolio,
+        "live_url": live_url,
+        "template_path": portfolio.get_template_path(),
+    }
+    return render(request, 'portfolios/publish_success.html', context)
+
+
+@xframe_options_exempt
+def preview_view(request):
+    """
+    View used inside the iframe for the live preview.
+    Uses @xframe_options_exempt to allow it to be embedded.
+    """
+    try:
+        portfolio = Portfolio.objects.get(user=request.user)
+    except Portfolio.DoesNotExist:
+        return render(request, "portfolios/preview.html", {
+            "template_path": None,
+            "template_name": None,
+            "portfolio": None,
+        })
+
+    template_path = portfolio.get_template_path()
+
+    return render(request, "portfolios/preview.html", {
+        "portfolio": portfolio,
+        "template_path": template_path,
+        "template_name": portfolio.template.name if portfolio.template else "",
+    })
+
+
+def published_view(request, username):
+    """
+    Public published site for the given username. (Template Wrapper - maps to portfolio_live template)
+    """
+    user = get_object_or_404(User, username=username)
+    portfolio = get_object_or_404(Portfolio, user=user)
+
+    if not portfolio.is_published:
+        return render(request, 'main/404.html', status=404) 
+
+    context = {
         "portfolio": portfolio,
         "template_path": portfolio.get_template_path(),
-        "template": portfolio.template
-    })
+        "template_name": portfolio.template.name if portfolio.template else "",
+    }
+    return render(request, 'portfolios/portfolio_live.html', context)
 
 
 def template1_view(request):
     return render(request, 'portfolios/portfolio_template1.html')
 
-
 def template2_view(request):
     return render(request, 'portfolios/portfolio_template2.html')
 
-
 def template3_view(request):
     return render(request, 'portfolios/portfolio_template3.html')
-
 
 def template4_view(request):
     return render(request, 'portfolios/portfolio_template4.html')
