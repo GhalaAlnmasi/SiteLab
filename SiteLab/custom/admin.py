@@ -15,6 +15,9 @@ class CustomRequestAdmin(admin.ModelAdmin):
         "created_at",
     )
 
+    # يسمح بتعديل الحالة من نفس صفحة الجدول
+    list_editable = ("status",)
+
     list_filter = (
         "status",
         "project_type",

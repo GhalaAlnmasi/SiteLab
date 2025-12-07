@@ -145,18 +145,14 @@ def publish_portfolio(request):
         "live_url": live_url
     })
 
+
 def submit_contact_view(request, username):
-    """
-    Visitors submit a contact message from published portfolio.
-    """
     from django.contrib.auth import get_user_model
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    try:
-        portfolio = user.portfolio
-    except Portfolio.DoesNotExist:
-        raise Http404
-    if not portfolio.is_published:
+
+    portfolio = getattr(user, "portfolio", None)
+    if not portfolio or not portfolio.is_published:
         return HttpResponseForbidden("Portfolio not public")
 
     if request.method == "POST":
@@ -165,10 +161,17 @@ def submit_contact_view(request, username):
             msg = form.save(commit=False)
             msg.portfolio = portfolio
             msg.save()
-            # Optionally: send email to portfolio.contact_email
-            messages.success(request, "Message sent. The user will contact you soon (if they check).")
-            return redirect(reverse('portfolios:published_view', args=[username]))
-        else:
-            messages.error(request, "Please correct the errors in the contact form.")
-            return redirect(reverse('portfolios:published_view', args=[username]))
-    return redirect(reverse('portfolios:published_view', args=[username]))
+
+            messages.success(request, "Message sent successfully!")
+            return redirect("portfolios:published_view", username=username)
+
+
+        messages.error(request, "Please correct the errors in the form.")
+        return render(request, "portfolios/templates_pack/dev_terminal.html", {
+            "portfolio": portfolio,
+            "contact_form": form,
+            "preview_mode": False,
+        })
+
+    # GET fallback
+    return redirect("portfolios:published_view", username=username)
