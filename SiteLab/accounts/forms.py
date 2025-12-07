@@ -49,7 +49,7 @@ class RegisterForm(forms.ModelForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'minimal-input',
-        'placeholder': 'Username'
+        'placeholder': 'Email'
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'minimal-input',
