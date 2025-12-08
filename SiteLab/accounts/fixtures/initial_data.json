@@ -1,0 +1,200 @@
+[
+{
+  "model": "accounts.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$kgt7BDzI4VBsQkxHx2Sqm0$rpDrUNNguuBryS/TeFZ6v6r790H2PH/O4vVBPSiWixU=",
+    "last_login": "2025-12-07T07:46:28.819Z",
+    "is_superuser": false,
+    "username": "samantha_design",
+    "first_name": "Samantha",
+    "last_name": "James",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-07T04:33:16.774Z",
+    "email": "samantha.james@example.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$hzhnIMR1ICdRfmiMXN1MAd$APHX+KE8rc6l2MV+pMgUAGrSFAGqHsKDY1ljgAbUCkg=",
+    "last_login": "2025-12-07T07:55:33.918Z",
+    "is_superuser": false,
+    "username": "michael_dev",
+    "first_name": "Michael",
+    "last_name": "Devon",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-07T04:33:55.939Z",
+    "email": "michael.devon@example.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ymwACFMJPR7EUfaJ7fvwzB$t2IKTJbuQVM52n/32p9Ff+P8UTMtF/m1GYTX3kcLDKE=",
+    "last_login": "2025-12-07T05:54:10.301Z",
+    "is_superuser": false,
+    "username": "lena_codes",
+    "first_name": "Lena",
+    "last_name": "Keller",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-07T04:34:30.566Z",
+    "email": "lena.codes@example.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$FBdDS00Vea8VxWWeiVBvNq$wbPqCqwPhg/gBH+TDS7VRKDANBaD+2hcMwiO1NSkNkI=",
+    "last_login": "2025-12-07T04:43:03.055Z",
+    "is_superuser": false,
+    "username": "omar_backend",
+    "first_name": "Omar",
+    "last_name": "Al-Hassan",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-07T04:35:02.398Z",
+    "email": "omar.backend@example.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Wq4VZSm5QfJqcGgvGHkTML$1MNWL3ovSnDzRzNyJwVQGv69GXxm3/nirEH9pdd6zow=",
+    "last_login": "2025-12-07T07:51:41.516Z",
+    "is_superuser": false,
+    "username": "nora_creative",
+    "first_name": "Nora",
+    "last_name": "Fadel",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-07T04:35:34.828Z",
+    "email": "nora.creative@example.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$PEupJsSGyut4832mjxF69O$iYJBvTz/H08kxFqAhA2R8X3ErYIqx/4D11/DxlXG4G8=",
+    "last_login": "2025-12-07T05:51:19.364Z",
+    "is_superuser": true,
+    "username": "ghala",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-12-07T05:06:22.996Z",
+    "email": "gh@gmail.com",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "bio": "Creative UX/UI designer with 5+ years of experience focused on simplicity and usability.",
+    "avatar": "avatars/3d_cartoon_-_Photos__telechargez_gratuitement_des_images_de_haute_qualite__Freepik.jpg",
+    "job_title": "UI/UX Designer\""
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "bio": "Full-stack engineer specializing in Django, React, scalable systems & automated testing.",
+    "avatar": "avatars/3d_cartoon_avatar_of_a_man_minimal_3d_character__Premium_AI-generated_image.jpg",
+    "job_title": "Full-Stack Developer"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "bio": "Frontend developer who transforms UI designs into beautiful responsive web apps.",
+    "avatar": "",
+    "job_title": "Frontend Developer"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "bio": "Backend engineer with strong focus on APIs, system architecture, and cloud deployments.",
+    "avatar": "avatars/My_Selfie_Character_head_animation_-_Mark_Gaffud.jpg",
+    "job_title": "Backend Engineer"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 5,
+  "fields": {
+    "user": 5,
+    "bio": "Brand identity designer who helps businesses create memorable visual systems.",
+    "avatar": "avatars/3D_Cartoon_Avatar_of_a_Woman_Minimal_3D_Character__Premium_AI-generated_image.jpg",
+    "job_title": "Brand Designer"
+  }
+},
+{
+  "model": "accounts.privacysettings",
+  "pk": 1,
+  "fields": {
+    "user": 5,
+    "show_email": true,
+    "show_bio": true,
+    "show_portfolio": true
+  }
+},
+{
+  "model": "accounts.privacysettings",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "show_email": false,
+    "show_bio": true,
+    "show_portfolio": true
+  }
+},
+{
+  "model": "accounts.privacysettings",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "show_email": false,
+    "show_bio": true,
+    "show_portfolio": true
+  }
+},
+{
+  "model": "accounts.privacysettings",
+  "pk": 4,
+  "fields": {
+    "user": 6,
+    "show_email": true,
+    "show_bio": true,
+    "show_portfolio": true
+  }
+}
+]

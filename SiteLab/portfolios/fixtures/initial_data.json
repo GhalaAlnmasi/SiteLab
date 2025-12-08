@@ -1,0 +1,238 @@
+[
+{
+  "model": "portfolios.portfoliotemplate",
+  "pk": 1,
+  "fields": {
+    "slug": "arch-minimal",
+    "name": "Architect Minimal",
+    "icon_class": "fa-solid fa-pen-nib",
+    "description": "Clean layout with strong typography",
+    "default_tagline": "",
+    "default_about": "",
+    "default_email": "",
+    "default_instagram": "",
+    "default_twitter": "",
+    "order": 0,
+    "template_path": "portfolios/templates_pack/arch_minimal.html",
+    "preview_partial": "portfolios/templates_pack/arch_minimal_preview.html"
+  }
+},
+{
+  "model": "portfolios.portfoliotemplate",
+  "pk": 2,
+  "fields": {
+    "slug": "pro-designer",
+    "name": "Professional Designer",
+    "icon_class": "fa-solid fa-palette",
+    "description": "Modern layout for creative designers",
+    "default_tagline": "",
+    "default_about": "",
+    "default_email": "",
+    "default_instagram": "",
+    "default_twitter": "",
+    "order": 0,
+    "template_path": "portfolios/templates_pack/pro_designer.html",
+    "preview_partial": "portfolios/templates_pack/pro_designer_preview.html"
+  }
+},
+{
+  "model": "portfolios.portfoliotemplate",
+  "pk": 3,
+  "fields": {
+    "slug": "creative-photographer",
+    "name": "Creative Photographer",
+    "icon_class": "fa-solid fa-camera",
+    "description": "Full-image template for photographers",
+    "default_tagline": "",
+    "default_about": "",
+    "default_email": "",
+    "default_instagram": "",
+    "default_twitter": "",
+    "order": 0,
+    "template_path": "portfolios/templates_pack/creative_photographer.html",
+    "preview_partial": "portfolios/templates_pack/creative_photographer_preview.html"
+  }
+},
+{
+  "model": "portfolios.portfoliotemplate",
+  "pk": 4,
+  "fields": {
+    "slug": "dev-terminal",
+    "name": "Developer Terminal",
+    "icon_class": "fa-solid fa-terminal",
+    "description": "Dark theme like a real terminal",
+    "default_tagline": "",
+    "default_about": "",
+    "default_email": "",
+    "default_instagram": "",
+    "default_twitter": "",
+    "order": 0,
+    "template_path": "portfolios/templates_pack/dev_terminal.html",
+    "preview_partial": "portfolios/templates_pack/dev_terminal_preview.html"
+  }
+},
+{
+  "model": "portfolios.portfolio",
+  "pk": 1,
+  "fields": {
+    "user": 5,
+    "template": 3,
+    "first_name": "",
+    "last_name": "",
+    "tagline": "",
+    "about": "",
+    "contact_email": "",
+    "instagram": "",
+    "twitter": "",
+    "website": "",
+    "project1_title": "",
+    "project1_description": "",
+    "project1_url": "",
+    "project2_title": "",
+    "project2_description": "",
+    "project2_url": "",
+    "project3_title": "",
+    "project3_description": "",
+    "project3_url": "",
+    "avatar": "",
+    "created_at": "2025-12-07T04:36:36.880Z",
+    "last_updated": "2025-12-07T04:36:36.880Z",
+    "is_published": false
+  }
+},
+{
+  "model": "portfolios.portfolio",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "template": 4,
+    "first_name": "Samantha",
+    "last_name": "\"James\"",
+    "tagline": "Senior UI/UX Designer",
+    "about": "Senior UI/UX Designer",
+    "contact_email": "w@example.com",
+    "instagram": "",
+    "twitter": "https://twitter.com/michaeldev",
+    "website": "https://michael.dev",
+    "project1_title": "Django SaaS Platform",
+    "project1_description": "A...",
+    "project1_url": "https://asdfgf.com",
+    "project2_title": "ertuyig",
+    "project2_description": "A,,.,.",
+    "project2_url": "https://asdfgf.com",
+    "project3_title": "treytugjhkl;'\\",
+    "project3_description": "asdas",
+    "project3_url": "https://asdfgf.com",
+    "avatar": "avatars/3d_cartoon_-_Photos__telechargez_gratuitement_des_images_de_haute_qualite__Freep_wOxySKu.jpg",
+    "created_at": "2025-12-07T04:50:31.215Z",
+    "last_updated": "2025-12-07T07:50:38.360Z",
+    "is_published": true
+  }
+},
+{
+  "model": "portfolios.portfolio",
+  "pk": 3,
+  "fields": {
+    "user": 2,
+    "template": 3,
+    "first_name": "Michael",
+    "last_name": "Devon",
+    "tagline": "Full-Stack Web Developer",
+    "about": "I build end-to-end web applications with a focus on performance, security, and code quality.",
+    "contact_email": "michael.devon@example.com",
+    "instagram": "",
+    "twitter": "https://twitter.com/michaeldev",
+    "website": "https://michael.dev",
+    "project1_title": "Django SaaS Platform",
+    "project1_description": "Multi-tenant SaaS platform with Stripe integration and real-time notifications.",
+    "project1_url": "https://github.com/michaeldev/saas-platform",
+    "project2_title": "Task Manager App",
+    "project2_description": "A full CRUD app with React frontend and Django backend.",
+    "project2_url": "https://github.com/michaeldev/taskmanager",
+    "project3_title": "API Automation Suite",
+    "project3_description": "Automated API test suite using PyTest and CI/CD workflow.\"",
+    "project3_url": "https://github.com/michaeldev/api-tests",
+    "avatar": "avatars/3d_cartoon_avatar_of_a_man_minimal_3d_character__Premium_AI-generated_image_q0t6pjZ.jpg",
+    "created_at": "2025-12-07T04:52:18.854Z",
+    "last_updated": "2025-12-07T07:54:39.092Z",
+    "is_published": true
+  }
+},
+{
+  "model": "portfolios.portfolio",
+  "pk": 4,
+  "fields": {
+    "user": 6,
+    "template": null,
+    "first_name": "",
+    "last_name": "",
+    "tagline": "",
+    "about": "",
+    "contact_email": "",
+    "instagram": "",
+    "twitter": "",
+    "website": "",
+    "project1_title": "",
+    "project1_description": "",
+    "project1_url": "",
+    "project2_title": "",
+    "project2_description": "",
+    "project2_url": "",
+    "project3_title": "",
+    "project3_description": "",
+    "project3_url": "",
+    "avatar": "",
+    "created_at": "2025-12-07T05:19:29.571Z",
+    "last_updated": "2025-12-07T05:19:32.161Z",
+    "is_published": true
+  }
+},
+{
+  "model": "portfolios.contactmessage",
+  "pk": 1,
+  "fields": {
+    "portfolio": 3,
+    "name": "Nora",
+    "email": "w@example.com",
+    "message": "Hii",
+    "created_at": "2025-12-07T06:18:26.920Z",
+    "responded": false
+  }
+},
+{
+  "model": "portfolios.contactmessage",
+  "pk": 2,
+  "fields": {
+    "portfolio": 3,
+    "name": "Nora",
+    "email": "w@example.com",
+    "message": "Hii",
+    "created_at": "2025-12-07T06:20:25.496Z",
+    "responded": false
+  }
+},
+{
+  "model": "portfolios.contactmessage",
+  "pk": 3,
+  "fields": {
+    "portfolio": 3,
+    "name": "Ghada",
+    "email": "w@example.com",
+    "message": "hi",
+    "created_at": "2025-12-07T06:21:23.946Z",
+    "responded": false
+  }
+},
+{
+  "model": "portfolios.contactmessage",
+  "pk": 4,
+  "fields": {
+    "portfolio": 2,
+    "name": "Nora",
+    "email": "w@example.com",
+    "message": "Good",
+    "created_at": "2025-12-07T07:49:46.869Z",
+    "responded": false
+  }
+}
+]
